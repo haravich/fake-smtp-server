@@ -14,8 +14,6 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
-  OWNER: sj26
-  REPO: mailcatcher
 
 jobs:
   build:
@@ -28,7 +26,7 @@ jobs:
       - name: Run curl command to get latest version
         id: curl_output
         run: |
-          response=$(curl -s "https://api.github.com/repos/${{ OWNER }}/${{ REPO }}/releases/latest")
+          response=$(curl -s "https://api.github.com/repos/sj26/mailcatcher/releases/latest")
           
           # Parse and extract tag_name from the JSON response
           tag_name=$(echo $response | jq -r '.tag_name')
