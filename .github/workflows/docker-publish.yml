@@ -72,11 +72,11 @@ jobs:
 
       - name: Create pull request
         if: steps.check_versions.outputs.build_docker == 'true'
-        uses: actions/github-script@v5
+        uses: actions/github-script@v6
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const pr = await github.pulls.create({
+            const pr = await github.rest.pulls.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
               title: `Update version to ${{ steps.curl_output.outputs.latest_version }}`,
