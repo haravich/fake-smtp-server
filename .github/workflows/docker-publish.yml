@@ -26,6 +26,7 @@ jobs:
       - name: Run curl command to get latest version
         id: curl_output
         run: |
+          set -x
           response=$(curl -s "https://api.github.com/repos/sj26/mailcatcher/releases/latest")
           
           # Parse and extract tag_name from the JSON response
