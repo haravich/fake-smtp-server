@@ -33,16 +33,16 @@ jobs:
           tag_name=$(echo $response | jq -r '.tag_name')
   
           # Remove the leading 'v' from tag_name
-          latest_version=${tag_name#v}
+          echo "latest_version=${tag_name#v}" >> $GITHUB_OUTPUT
           
       - name: Display latest version
         run: |
-          echo "Latest Version: $latest_version"
+          echo "Latest Version: ${{ steps.curl_output.outputs.latest_version }}"
   
       - name: Read version from file
         id: read_version
         run: |
-          echo "::set-output name=version::$(cat version.txt)"
+          echo "version=$(cat version.txt)" >> $GITHUB_OUTPUT
   
       - name: Display version from file
         run: |
@@ -51,13 +51,39 @@ jobs:
       - name: Check if versions are different
         id: check_versions
         run: |
-          if [ "$latest_version" != "${{ steps.read_version.outputs.version }}" ]; then
+          if [ "${{ steps.curl_output.outputs.latest_version }}" != "${{ steps.read_version.outputs.version }}" ]; then
             echo "Versions are different, running Docker build..."
-            echo "::set-output name=build_docker::true"
+            git checkout -b version-update-${{ github.run_number }}
+            echo "${{ steps.curl_output.outputs.latest_version }}" > version.txt            
+            echo "build_docker=true" >> $GITHUB_OUTPUT
           else
             echo "Versions are the same, skipping Docker build."
-            echo "::set-output name=build_docker::false"
+            echo "build_docker=false" >> $GITHUB_OUTPUT
           fi
+
+      - name: Commit and push changes
+        if: steps.check_versions.outputs.build_docker == 'true'
+        run: |
+          git add version.txt
+          git config --global user.email "github-actions-bot@freeops.dev"
+          git config --global user.name "GitHub Actions Bot"
+          git commit -m "Update version to ${{ steps.curl_output.outputs.latest_version }}"
+          git push origin version-update-${{ github.run_number }}
+
+      - name: Create pull request
+        if: steps.check_versions.outputs.build_docker == 'true'
+        uses: actions/github-script@v5
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const pr = await github.pulls.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `Update version to ${{ steps.curl_output.outputs.latest_version }}`,
+              body: 'Automated pull request to update version.',
+              head: `version-update-${context.runNumber}`,
+              base: 'main'
+            });
 
       - name: Docker meta
         if: steps.check_versions.outputs.build_docker == 'true'
@@ -106,4 +132,5 @@ jobs:
         with:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}  
+          labels: ${{ steps.meta.outputs.labels }}
+          build-args: ${{ }}
