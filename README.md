@@ -1,10 +1,10 @@
 # Simulating Email with a Fake SMTP Server Using Docker
 
+[![fake-smtp-server build](https://github.com/haravich/fake-smtp-server/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/haravich/fake-smtp-server/actions/workflows/docker-publish.yml) ![Docker pulls](https://img.shields.io/docker/pulls/haravich/fake-smtp-server)
+
 ## Introduction
 
 In the realm of software testing, having a reliable environment to simulate email interactions is crucial. Docker, a powerful containerization technology, offers a seamless solution for creating and managing isolated environments. This tutorial will guide you through setting up a fake SMTP server using a Docker image, allowing you to mimic email exchanges for testing purposes.
-
-[![fake-smtp-server build](https://github.com/haravich/fake-smtp-server/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/haravich/fake-smtp-server/actions/workflows/docker-publish.yml)
 
 ## Prerequisites
 
