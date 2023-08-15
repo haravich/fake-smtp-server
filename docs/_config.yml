@@ -1,0 +1,3 @@
+title: Fake SMTP Server
+description: Creating a fake SMTP server using Docker enhances your email-related testing capabilities.
+theme: minima # or any other Jekyll theme you prefer
