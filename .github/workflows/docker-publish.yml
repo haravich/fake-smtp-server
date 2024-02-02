@@ -130,7 +130,6 @@ jobs:
         if: github.event_name != 'pull_request' && steps.check_versions.outputs.build_docker == 'false'
         uses: docker/build-push-action@v4
         with:
-          platforms: linux/amd64
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
