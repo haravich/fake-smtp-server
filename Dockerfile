@@ -11,7 +11,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM ruby:3.3-alpine
+FROM ruby:3.2-alpine
+
 LABEL maintainer="Hariprasath Ravichandran <udthariprasath@gmail.com>"
 
 ARG VERSION=unknown
@@ -22,14 +23,12 @@ RUN if [ "$VERSION" = "unknown" ]; then \
       exit 1; \
     fi
 RUN apk update && apk upgrade
-RUN apk add --no-cache build-base sqlite-libs sqlite-dev
-    
-RUN gem install sqlite3 -v '1.6.0' --platform=ruby -- --with-opt-include=/usr/include --with-cflags="-Wno-error=implicit-function-declaration" && \
-    gem install mailcatcher -v "$VERSION" && \
-    apk del --rdepends --purge build-base sqlite-dev
+RUN apk --no-cache --update add build-base ruby ruby-dev ruby-json ruby-etc sqlite-libs sqlite-dev gcompat \
+    && gem install sqlite3 --no-document --platform ruby \
+    && gem install mailcatcher:${VERSION} --no-document \
+    && apk del --rdepends --purge build-base
 
 EXPOSE 1025 1080
 
 ENTRYPOINT ["mailcatcher", "--foreground"]
 CMD ["--ip", "0.0.0.0"]
-

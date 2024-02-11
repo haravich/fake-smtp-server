@@ -19,7 +19,7 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-    timeout-minutes: 15  # Set your desired maximum timeout here
+    timeout-minutes: 30  # Set your desired maximum timeout here
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -130,6 +130,7 @@ jobs:
         if: github.event_name != 'pull_request' && steps.check_versions.outputs.build_docker == 'false'
         uses: docker/build-push-action@v4
         with:
+          platforms: linux/386,linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64/v8,linux/ppc64le,linux/s390x
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}

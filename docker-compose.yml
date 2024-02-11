@@ -1,0 +1,9 @@
+version: "3"
+
+services:
+  mailcatcher:
+    restart: on-failure
+    image: haravich/fake-smtp-server
+    ports:
+    - "1080:1080"
+    - "1025:1025"
