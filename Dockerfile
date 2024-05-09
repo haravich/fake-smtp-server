@@ -11,7 +11,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM ruby:3.2-alpine
+FROM dockage/alpine:3.18.3
 
 LABEL maintainer="Hariprasath Ravichandran <udthariprasath@gmail.com>"
 
@@ -23,7 +23,7 @@ RUN if [ "$VERSION" = "unknown" ]; then \
       exit 1; \
     fi
 RUN apk update && apk upgrade
-RUN apk --no-cache --update add build-base ruby ruby-dev ruby-json ruby-etc sqlite-libs sqlite-dev gcompat \
+RUN apk --no-cache --update add build-base ruby ruby-dev ruby-json ruby-etc sqlite sqlite-libs sqlite-dev gcompat \
     && gem install sqlite3 --no-document --platform ruby \
     && gem install mailcatcher:${VERSION} --no-document \
     && apk del --rdepends --purge build-base
